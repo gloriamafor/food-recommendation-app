@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Food Recommendation Generator</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/appstyles.css') }}" />
+</head>
+<body>
+    <h1>Food Recommendation Generator</h1>
+
+    <form id="food-form">
+        <label for="cuisine">Cuisine:</label>
+        <input type="text" id="cuisine" name="cuisine" placeholder="e.g., Italian, Thai" />
+
+        <label for="meal_type">Meal Type:</label>
+        <input type="text" id="meal_type" name="meal_type" placeholder="e.g., dinner, breakfast" />
+
+        <label for="diet">Diet:</label>
+        <input type="text" id="diet" name="diet" placeholder="e.g., vegetarian, vegan" />
+
+        <button type="submit">Get Recommendation</button>
+    </form>
+
+    <hr />
+
+    <div id="result"></div>
+
+    <script src="{{ url_for('static', filename='js/appscript.js') }}"></script>
+</body>
+</html>
