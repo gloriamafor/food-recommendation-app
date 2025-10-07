@@ -1,48 +1,64 @@
 from flask import Flask, request, jsonify, render_template
-import requests
-import os
+from serpapi import GoogleSearch
 
 app = Flask(__name__)
+SERPAPI_KEY = "d25d0feb948aa9475e14d0448f63f536d1779638a33c920174176ef6a7919714"
 
-API_KEY = '1a1544ab52194d4dbca2b74d7a7ad577'  # Replace with a valid key if expired
-BASE_URL = 'https://api.spoonacular.com/recipes/complexSearch'
+@app.route("/")
+def home():
+    return render_template("index.html")
 
-@app.route('/', methods=['GET', 'POST'])
-def home_and_recommend():
-    print("Rendering index.html from:", os.path.abspath("templates/index.html"))
-    cuisine = request.args.get('cuisine') if request.method == 'GET' else request.form.get('cuisine')
-    meal_type = request.args.get('meal_type') if request.method == 'GET' else request.form.get('meal_type')
-    diet = request.args.get('diet') if request.method == 'GET' else request.form.get('diet')
+@app.route("/get_recipe", methods=["GET"])
+def get_recipe():
+    craving = request.args.get("craving", "")
+    cuisine = request.args.get("cuisine", "")
+    diet = request.args.get("diet", "")
+    meal_type = request.args.get("meal_type", "")
 
-    if not any([cuisine, meal_type, diet]):
-        return render_template('index.html')
+    query = f"{craving} {cuisine} {diet} {meal_type} recipe"
 
     params = {
-        'apiKey': API_KEY,
-        'cuisine': cuisine,
-        'type': meal_type,
-        'diet': diet,
-        'number': 5,
-        'addRecipeInformation': True
+        "engine": "google",
+        "q": query,
+        "api_key": SERPAPI_KEY
     }
 
     try:
-        response = requests.get(BASE_URL, params=params)
-        response.raise_for_status()  # Raise an exception for bad status codes
-        data = response.json()
-        if data['results']:
-            recipe = data['results'][0]
-            recommendation = {
-                'title': recipe['title'],
-                'image': recipe['image'],
-                'sourceUrl': recipe['sourceUrl'],
-                'instructions': recipe.get('instructions', 'Instructions not available.')
-            }
-            return jsonify(recommendation)
-        else:
-            return jsonify({"error": "No recipes found for your input."}), 404
-    except requests.exceptions.RequestException as e:
-        return jsonify({"error": f"API request failed: {str(e)}"}), 500
+        search = GoogleSearch(params)
+        results = search.get_dict()
 
-if __name__ == '__main__':
+        # Google search results
+        search_results = results.get("organic_results", [])
+        if not search_results:
+            return jsonify({"error": "No recipes found for that query."}), 404
+
+        # Process first 5 results for links
+        links = []
+        for r in search_results[:5]:
+            title = r.get("title")
+            link = r.get("link")
+            if title and link:
+                links.append({"title": title, "link": link})
+
+        # Example: take first result for main food display
+        first_result = search_results[0]
+        food_name = first_result.get("title", "Unknown Recipe")
+        source_url = first_result.get("link", "#")
+
+        # You can optionally extract snippet info for ingredients
+        snippet = first_result.get("snippet", "Ingredients not available.")
+
+        return jsonify({
+            "food_name": food_name,
+            "cuisine": cuisine or "Unknown",
+            "ingredients": snippet,
+            "recipe_links": links,
+            "source_url": source_url
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+if __name__ == "__main__":
     app.run(debug=True)

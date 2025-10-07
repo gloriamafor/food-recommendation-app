@@ -4,27 +4,70 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Food Recommendation Generator</title>
-
     <link rel="stylesheet" href="{{ url_for('static', filename='css/appstyles.css') }}" />
 </head>
 <body>
     <h1>Food Recommendation Generator</h1>
 
     <form id="food-form">
-        <label for="cuisine">Cuisine:</label>
-        <input type="text" id="cuisine" name="cuisine" placeholder="e.g., Italian, Thai" />
+        <!-- Craving -->
+        <div class="form-group">
+            <label for="craving">What are you craving?</label>
+            <select id="craving" name="craving">
+                <option value="">Select</option>
+                <option value="sweet">Sweet</option>
+                <option value="salty">Salty</option>
+                <option value="spicy">Spicy</option>
+                <option value="sweet-salty">Sweet & Salty</option>
+                <option value="sweet-spicy">Sweet & Spicy</option>
+            </select>
+        </div>
 
-        <label for="meal_type">Meal Type:</label>
-        <input type="text" id="meal_type" name="meal_type" placeholder="e.g., dinner, breakfast" />
+        <!-- Cuisine -->
+        <div class="form-group">
+            <label for="cuisine">Cuisine:</label>
+            <select id="cuisine" name="cuisine">
+                <option value="">Select...</option>
+                <option value="Nigerian">Nigerian</option>
+                <option value="Kenyan">Kenyan</option>
+                <option value="Italian">Italian</option>
+                <option value="Japanese">Japanese</option>
+                <option value="Thai">Thai</option>
+            </select>
+        </div>
 
-        <label for="diet">Diet:</label>
-        <input type="text" id="diet" name="diet" placeholder="e.g., vegetarian, vegan" />
+        <!-- Diet -->
+        <div class="form-group">
+            <label for="diet">Diet:</label>
+            <select id="diet" name="diet">
+                <option value="">Select...</option>
+                <option value="vegetarian">Vegetarian</option>
+                <option value="vegan">Vegan</option>
+                <option value="omnivore">Omnivore</option>
+            </select>
+        </div>
 
-        <button type="submit">Get Recommendation</button>
+        <!-- Meal Type -->
+        <div class="form-group">
+            <label for="meal_type">Meal Type:</label>
+            <select id="meal_type" name="meal_type">
+                <option value="">Select...</option>
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+                <option value="dinner">Dinner</option>
+                <option value="snack">Snack</option>
+                <option value="dessert">Dessert</option>
+            </select>
+        </div>
+
+        <!-- Buttons side by side -->
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button type="submit" class="btn-primary">Get Recommendation</button>
+            <button type="button" id="surprise-btn" class="btn-secondary">Surprise Me 🌎</button>
+        </div>
     </form>
 
     <hr />
-
     <div id="result"></div>
 
     <script src="{{ url_for('static', filename='js/appscript.js') }}"></script>
