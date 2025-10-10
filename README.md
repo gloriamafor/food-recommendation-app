@@ -17,3 +17,5 @@ Programming Language: Python, HTML, CSS
 Libraries & Frameworks: Pandas, NumPy, Requests, Plotly
 APIs: External food/recipe APIs
 Development Tools: VS Code
+
+Access application here: http://127.0.0.1:5000
