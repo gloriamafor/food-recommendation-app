@@ -13,7 +13,7 @@ Features
 
 Technologies Used
 -----------------
-Programming Language: Python, HTML, CSS
+Programming Language: Javascript, Python, HTML, CSS
 Libraries & Frameworks: Pandas, NumPy, Requests, Plotly
 APIs: External food/recipe APIs
 Development Tools: VS Code
