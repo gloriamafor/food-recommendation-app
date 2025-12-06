@@ -1,162 +1,110 @@
-// 🌍 Comprehensive list of countries and territories (recognized + unrecognized)
+// ======================= 🌍 COUNTRY DROPDOWN =======================
+const countrySelect = document.getElementById("cuisine");
 const countries = [
-    // Africa
-    "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi",
-    "Cabo Verde", "Cameroon", "Central African Republic", "Chad", "Comoros",
-    "Congo (Republic)", "Congo (Democratic Republic)", "Djibouti", "Egypt",
-    "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia", "Gabon", "Gambia",
-    "Ghana", "Guinea", "Guinea-Bissau", "Ivory Coast", "Kenya", "Lesotho",
-    "Liberia", "Libya", "Madagascar", "Malawi", "Mali", "Mauritania",
-    "Mauritius", "Morocco", "Mozambique", "Namibia", "Niger", "Nigeria",
-    "Rwanda", "Sao Tome and Principe", "Senegal", "Seychelles", "Sierra Leone",
-    "Somalia", "Somaliland", "South Africa", "South Sudan", "Sudan", "Tanzania",
-    "Togo", "Tunisia", "Uganda", "Zambia", "Zimbabwe", "Western Sahara",
-  
-    // Asia
-    "Afghanistan", "Armenia", "Azerbaijan", "Bahrain", "Bangladesh", "Bhutan",
-    "Brunei", "Cambodia", "China", "East Timor", "Georgia", "India", "Indonesia",
-    "Iran", "Iraq", "Israel", "Japan", "Jordan", "Kazakhstan", "Kuwait",
-    "Kyrgyzstan", "Laos", "Lebanon", "Malaysia", "Maldives", "Mongolia",
-    "Myanmar (Burma)", "Nepal", "North Korea", "Oman", "Pakistan", "Palestine",
-    "Philippines", "Qatar", "Saudi Arabia", "Singapore", "South Korea", "Sri Lanka",
-    "Syria", "Taiwan", "Tajikistan", "Thailand", "Turkey", "Turkmenistan",
-    "United Arab Emirates", "Uzbekistan", "Vietnam", "Yemen",
-  
-    // Europe
-    "Albania", "Andorra", "Austria", "Belarus", "Belgium", "Bosnia and Herzegovina",
-    "Bulgaria", "Croatia", "Cyprus", "Czech Republic", "Denmark", "Estonia",
-    "Finland", "France", "Germany", "Greece", "Hungary", "Iceland", "Ireland",
-    "Italy", "Kosovo", "Latvia", "Liechtenstein", "Lithuania", "Luxembourg",
-    "Malta", "Moldova", "Monaco", "Montenegro", "Netherlands", "North Macedonia",
-    "Norway", "Poland", "Portugal", "Romania", "Russia", "San Marino", "Serbia",
-    "Slovakia", "Slovenia", "Spain", "Sweden", "Switzerland", "Ukraine",
-    "United Kingdom", "Vatican City",
-  
-    // North America
-    "Antigua and Barbuda", "Bahamas", "Barbados", "Belize", "Canada", "Costa Rica",
-    "Cuba", "Dominica", "Dominican Republic", "El Salvador", "Grenada",
-    "Guatemala", "Haiti", "Honduras", "Jamaica", "Mexico", "Nicaragua", "Panama",
-    "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines",
-    "Trinidad and Tobago", "United States", "Puerto Rico", "Greenland",
-    "Bermuda",
-  
-    // South America
-    "Argentina", "Bolivia", "Brazil", "Chile", "Colombia", "Ecuador", "Guyana",
-    "Paraguay", "Peru", "Suriname", "Uruguay", "Venezuela", "French Guiana",
-  
-    // Oceania
-    "Australia", "Fiji", "Kiribati", "Marshall Islands", "Micronesia",
-    "Nauru", "New Zealand", "Palau", "Papua New Guinea", "Samoa",
-    "Solomon Islands", "Tonga", "Tuvalu", "Vanuatu",
-  
-    // Territories and special regions
-    "Hong Kong", "Macau", "Puerto Rico", "Greenland", "Faroe Islands",
-    "Guam", "New Caledonia", "French Polynesia", "Cook Islands",
-    "Niue", "Tokelau", "Montserrat", "Cayman Islands", "Aruba",
-    "Curacao", "Sint Maarten", "Falkland Islands", "Gibraltar",
-    "Isle of Man", "Jersey", "Guernsey"
-  ];  
-
-// Populate country dropdown
-const cuisineSelect = document.getElementById("cuisine");
-
-countries.forEach(country => {
+  "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda",
+  "Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain",
+  "Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia",
+  "Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso",
+  "Burundi","Cambodia","Cameroon","Canada","Cape Verde","Central African Republic",
+  "Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica","Croatia",
+  "Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic",
+  "Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini",
+  "Ethiopia","Fiji","Finland","France","Gabon","Gambia","Georgia","Germany","Ghana",
+  "Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras",
+  "Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy",
+  "Ivory Coast","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait",
+  "Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein",
+  "Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta",
+  "Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco",
+  "Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal",
+  "Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea",
+  "North Macedonia","Norway","Oman","Pakistan","Palau","Palestine","Panama",
+  "Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar",
+  "Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia",
+  "Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe",
+  "Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia",
+  "Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan",
+  "Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Taiwan",
+  "Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago",
+  "Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates",
+  "United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu","Vatican City",
+  "Venezuela","Vietnam","Western Sahara","Yemen","Zambia","Zimbabwe","Kosovo",
+  "Taiwan","Northern Cyprus","Western Sahara","South Ossetia","Abkhazia","Transnistria",
+  "Somaliland","Nagorno-Karabakh"
+];
+countrySelect.innerHTML = '<option value="">Select...</option>';
+countries.forEach(c => {
   const option = document.createElement("option");
-  option.value = country;
-  option.textContent = country;
-  cuisineSelect.appendChild(option);
+  option.value = c;
+  option.textContent = c;
+  countrySelect.appendChild(option);
 });
 
+// ======================= 🥗 DIET DROPDOWN =======================
+const dietSelect = document.getElementById("diet");
+const diets = ["No Preference","Balanced","High Protein","Low Fat","Low Carb","Keto","Vegan","Vegetarian","Pescatarian","Paleo","Gluten Free","Dairy Free","Halal","Kosher"];
+dietSelect.innerHTML = '<option value="">Select...</option>';
+diets.forEach(d => dietSelect.appendChild(new Option(d,d)));
 
-const form = document.getElementById('food-form');
-const resultDiv = document.getElementById('result');
-const surpriseBtn = document.getElementById('surprise-btn');
+// ======================= 🍽️ MEAL TYPE DROPDOWN =======================
+const mealTypeSelect = document.getElementById("meal_type");
+const mealTypes = ["No Preference","Breakfast","Brunch","Lunch","Snack","Dinner","Dessert","Drink","Appetizer","Side Dish","Soup","Salad","Main Course","Street Food","Traditional Dish","Fast Food"];
+mealTypeSelect.innerHTML = '<option value="">Select...</option>';
+mealTypes.forEach(m => mealTypeSelect.appendChild(new Option(m,m)));
 
-function displayRecipe(data) {
-    let linksHtml = "<ul>";
-    if (data.recipe_links && data.recipe_links.length > 0) {
-        data.recipe_links.forEach(l => {
-            linksHtml += `<li><a href="${l.link}" target="_blank">${l.title}</a></li>`;
-        });
-    } else {
-        linksHtml += "<li>No links available</li>";
-    }
-    linksHtml += "</ul>";
-
-    resultDiv.innerHTML = `
-        <div class="recipe-card">
-            <h2>${data.food_name}</h2>
-            <p><strong>Cuisine:</strong> ${data.cuisine}</p>
-            <h3>Ingredients / Description:</h3>
-            <p>${data.ingredients}</p>
-            <h3>Recipe Links:</h3>
-            ${linksHtml}
-            <p><a href="${data.source_url}" target="_blank">View Main Source</a></p>
-        </div>
-    `;
+// ======================= 💾 SAVE USER SELECTIONS =======================
+function saveSelections() {
+  localStorage.setItem("cuisine", countrySelect.value);
+  localStorage.setItem("diet", dietSelect.value);
+  localStorage.setItem("mealType", mealTypeSelect.value);
 }
 
-function showLoader(message="Loading...") {
-    resultDiv.innerHTML = `<div class="loader"></div><p>${message}</p>`;
-}
-
-// Form submit
-form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    showLoader("Searching recipes...");
-
-    const craving = document.getElementById('craving').value;
-    const cuisine = document.getElementById('cuisine').value;
-    const diet = document.getElementById('diet').value;
-    const meal_type = document.getElementById('meal_type').value;
-
-    const params = new URLSearchParams({ craving, cuisine, diet, meal_type });
-
-    try {
-        const response = await fetch(`/get_recipe?${params.toString()}`);
-        const data = await response.json();
-
-        if (response.ok) {
-            displayRecipe(data);
-        } else {
-            resultDiv.innerHTML = `<p style="color:red;">Error: ${data.error}</p>`;
-        }
-    } catch (err) {
-        resultDiv.innerHTML = `<p style="color:red;">Something went wrong: ${err.message}</p>`;
-    }
+window.addEventListener("load", () => {
+  if(localStorage.getItem("cuisine")) countrySelect.value = localStorage.getItem("cuisine");
+  if(localStorage.getItem("diet")) dietSelect.value = localStorage.getItem("diet");
+  if(localStorage.getItem("mealType")) mealTypeSelect.value = localStorage.getItem("mealType");
 });
 
-// Surprise Me
-surpriseBtn.addEventListener('click', async () => {
-    showLoader("🌎 Fetching a random world dish...");
+// ======================= 🍳 GET RECOMMENDATION & SURPRISE ME =======================
+async function fetchRecipe(query) {
+  try {
+    const response = await fetch(`/recommend?query=${encodeURIComponent(query)}`);
+    const data = await response.json();
 
-    const worldCuisines = ["Nigerian", "Kenyan", "Italian", "Japanese", "Thai"];
-    const cravings = ["sweet", "salty", "spicy", "sweet-salty", "sweet-spicy"];
-    const diets = ["vegetarian", "vegan", "eat-meat"];
-    const meals = ["breakfast", "lunch", "dinner", "snack", "dessert"];
+    if (!data || data.error) {
+      document.getElementById("result").innerHTML = `<p>${data.error || "No results found."}</p>`;
+      return;
+    }
 
-    const randomCuisine = worldCuisines[Math.floor(Math.random() * worldCuisines.length)];
-    const randomCraving = cravings[Math.floor(Math.random() * cravings.length)];
-    const randomDiet = diets[Math.floor(Math.random() * diets.length)];
-    const randomMeal = meals[Math.floor(Math.random() * meals.length)];
+    // Clear previous results
+    document.getElementById("result").innerHTML = "";
 
-    const params = new URLSearchParams({
-        craving: randomCraving,
-        cuisine: randomCuisine,
-        diet: randomDiet,
-        meal_type: randomMeal
+    data.forEach(recipe => {
+      const card = document.createElement("div");
+      card.className = "recipe-card";
+      card.innerHTML = `
+        <h2>${recipe.title}</h2>
+        ${recipe.image ? `<img src="${recipe.image}" alt="Food image">` : ""}
+        <p><strong>Country:</strong> ${recipe.country || "Unknown"}</p>
+        <p><strong>Ingredients:</strong><br>${recipe.ingredients}</p>
+        <p><strong>Steps:</strong><br>${recipe.instructions}</p>
+        <a href="${recipe.sourceUrl}" target="_blank">View Full Recipe</a>
+      `;
+      document.getElementById("result").appendChild(card);
     });
+  } catch (err) {
+    document.getElementById("result").innerHTML = `<p>Something went wrong: ${err}</p>`;
+  }
+}
 
-    try {
-        const response = await fetch(`/get_recipe?${params.toString()}`);
-        const data = await response.json();
+document.getElementById("getRecommendation").addEventListener("click", () => {
+  saveSelections();
+  const query = `${document.getElementById("craving").value} ${countrySelect.value} ${dietSelect.value} ${mealTypeSelect.value} recipe`;
+  fetchRecipe(query);
+});
 
-        if (response.ok) {
-            displayRecipe(data);
-        } else {
-            resultDiv.innerHTML = `<p style="color:red;">Error: ${data.error}</p>`;
-        }
-    } catch (err) {
-        resultDiv.innerHTML = `<p style="color:red;">Something went wrong: ${err.message}</p>`;
-    }
+document.getElementById("surpriseMe").addEventListener("click", () => {
+  saveSelections();
+  const randomQuery = `popular ${countries[Math.floor(Math.random()*countries.length)]} ${mealTypes[Math.floor(Math.random()*mealTypes.length)]} ${diets[Math.floor(Math.random()*diets.length)]} recipe`;
+  fetchRecipe(randomQuery);
 });

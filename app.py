@@ -2,63 +2,82 @@ from flask import Flask, request, jsonify, render_template
 from serpapi import GoogleSearch
 
 app = Flask(__name__)
+
+# Your SerpApi key
 SERPAPI_KEY = "d25d0feb948aa9475e14d0448f63f536d1779638a33c920174176ef6a7919714"
 
+# Homepage route
 @app.route("/")
 def home():
     return render_template("index.html")
 
-@app.route("/get_recipe", methods=["GET"])
-def get_recipe():
-    craving = request.args.get("craving", "")
-    cuisine = request.args.get("cuisine", "")
-    diet = request.args.get("diet", "")
-    meal_type = request.args.get("meal_type", "")
-
-    query = f"{craving} {cuisine} {diet} {meal_type} recipe"
-
-    params = {
-        "engine": "google",
-        "q": query,
-        "api_key": SERPAPI_KEY
-    }
+# Recipe recommendation route
+@app.route("/recommend")
+def recommend():
+    query = request.args.get("query", "")
+    if not query:
+        return jsonify({"error": "No query provided."}), 400
 
     try:
+        params = {
+            "engine": "google",
+            "q": query,
+            "api_key": SERPAPI_KEY,
+            "gl": "us",
+            "hl": "en"
+        }
+
         search = GoogleSearch(params)
         results = search.get_dict()
 
-        # Google search results
-        search_results = results.get("organic_results", [])
-        if not search_results:
-            return jsonify({"error": "No recipes found for that query."}), 404
+        recipes = results.get("recipes_results") or []
 
-        # Process first 5 results for links
-        links = []
-        for r in search_results[:5]:
-            title = r.get("title")
-            link = r.get("link")
-            if title and link:
-                links.append({"title": title, "link": link})
+        if not recipes:
+            # fallback to first 3 organic results
+            organic = results.get("organic_results") or []
+            response_data = []
+            for item in organic[:3]:
+                link = item.get("link")
+                title = item.get("title")
+                if link and title:
+                    response_data.append({
+                        "title": title,
+                        "image": item.get("thumbnail", ""),
+                        "country": "Unknown",
+                        "ingredients": "N/A",
+                        "instructions": "N/A",
+                        "sourceUrl": link
+                    })
+            if response_data:
+                return jsonify(response_data)
+            return jsonify({"error": "No recipes found."}), 404
 
-        # Example: take first result for main food display
-        first_result = search_results[0]
-        food_name = first_result.get("title", "Unknown Recipe")
-        source_url = first_result.get("link", "#")
+        response_data = []
+        for recipe in recipes[:3]:  # top 3 recipes
+            title = recipe.get("title", "Unknown Dish")
+            image = recipe.get("thumbnail", "")
+            source_url = recipe.get("link", "")
+            cuisine = recipe.get("cuisine", "Unknown")
+            ingredients_list = recipe.get("ingredients") or []
+            instructions_list = recipe.get("instructions") or []
+            ingredients_html = "<ul>" + "".join(f"<li>{i}</li>" for i in ingredients_list) + "</ul>" if ingredients_list else "N/A"
+            instructions_html = "<ol>" + "".join(f"<li>{s}</li>" for s in instructions_list) + "</ol>" if instructions_list else "N/A"
 
-        # You can optionally extract snippet info for ingredients
-        snippet = first_result.get("snippet", "Ingredients not available.")
+            response_data.append({
+                "title": title,
+                "image": image,
+                "country": cuisine,
+                "ingredients": ingredients_html,
+                "instructions": instructions_html,
+                "sourceUrl": source_url
+            })
 
-        return jsonify({
-            "food_name": food_name,
-            "cuisine": cuisine or "Unknown",
-            "ingredients": snippet,
-            "recipe_links": links,
-            "source_url": source_url
-        })
+        return jsonify(response_data)
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+# Run Flask
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
+
