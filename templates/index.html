@@ -4,55 +4,97 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Food Recommendation Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/appstyles.css') }}" />
 </head>
 <body>
-    <h1>Food Recommendation Generator</h1>
-
-    <form id="food-form">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="craving">What are you craving?</label>
-                <select id="craving" name="craving">
-                    <option value="">Select...</option>
-                    <option value="sweet">Sweet</option>
-                    <option value="salty">Salty</option>
-                    <option value="spicy">Spicy</option>
-                    <option value="sweet-salty">Sweet & Salty</option>
-                    <option value="sweet-spicy">Sweet & Spicy</option>
-                </select>
+    <div class="page">
+        <header class="hero">
+            <div class="hero-text">
+                <p class="eyebrow">Global flavors, zero guesswork</p>
+                <h1>Food Recommendation Generator</h1>
+                <p class="subtitle">Pick a craving, a cuisine, and a diet. We will surface standout recipes to match your mood.</p>
+                <div class="hero-tags">
+                    <span>Comfort</span>
+                    <span>Adventurous</span>
+                    <span>Seasonal</span>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label for="cuisine">Cuisine / Country</label>
-                <select id="cuisine" name="cuisine">
-                    <option value="">Select...</option>
-                </select>
+            <div class="hero-plate" aria-hidden="true">
+                <div class="hero-plate-inner"></div>
             </div>
+        </header>
 
-            <div class="form-group">
-                <label for="diet">Diet</label>
-                <select id="diet" name="diet">
-                    <option value="">Select...</option>
-                </select>
-            </div>
+        <main>
+            <section class="panel">
+                <form id="food-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="craving">What are you craving?</label>
+                            <div class="select-wrap">
+                                <select id="craving" name="craving">
+                                    <option value="">Select...</option>
+                                    <option value="sweet">Sweet</option>
+                                    <option value="salty">Salty</option>
+                                    <option value="spicy">Spicy</option>
+                                    <option value="sweet-salty">Sweet & Salty</option>
+                                    <option value="sweet-spicy">Sweet & Spicy</option>
+                                </select>
+                            </div>
+                        </div>
 
-            <div class="form-group">
-                <label for="meal_type">Meal Type</label>
-                <select id="meal_type" name="meal_type">
-                    <option value="">Select...</option>
-                </select>
-            </div>
-        </div>
+                        <div class="form-group">
+                            <label for="cuisine">Cuisine / Country</label>
+                            <div class="select-wrap">
+                                <select id="cuisine" name="cuisine">
+                                    <option value="">Select...</option>
+                                </select>
+                            </div>
+                        </div>
 
-        <div class="button-row">
-            <button type="button" id="getRecommendation" class="btn-primary">Get Recommendation</button>
-            <button type="button" id="surpriseMe" class="btn-secondary">Surprise Me 🌎</button>
-        </div>
-    </form>
+                        <div class="form-group">
+                            <label for="diet">Diet</label>
+                            <div class="select-wrap">
+                                <select id="diet" name="diet">
+                                    <option value="">Select...</option>
+                                </select>
+                            </div>
+                        </div>
 
-    <hr />
-    <div id="result"></div>
+                        <div class="form-group">
+                            <label for="meal_type">Meal Type</label>
+                            <div class="select-wrap">
+                                <select id="meal_type" name="meal_type">
+                                    <option value="">Select...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-row">
+                        <button type="button" id="getRecommendation" class="btn-primary">Get Recommendation</button>
+                        <button type="button" id="surpriseMe" class="btn-secondary">Surprise Me 🌎</button>
+                    </div>
+
+                    <p class="form-note">Tip: leave any field blank to keep things open-ended.</p>
+                </form>
+            </section>
+
+            <section class="results">
+                <div class="results-head">
+                    <h2>Your picks</h2>
+                    <p>Results appear here with ingredients, steps, and links to the full recipe.</p>
+                </div>
+                <div id="result" class="result-grid" aria-live="polite">
+                    <div class="empty-state">
+                        <p>Choose a few options above, then click “Get Recommendation.”</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
 
     <script src="{{ url_for('static', filename='js/appscript.js') }}"></script>
 </body>

@@ -51,6 +51,11 @@ const mealTypeSelect = document.getElementById("meal_type");
 const mealTypes = ["No Preference","Breakfast","Brunch","Lunch","Snack","Dinner","Dessert","Drink","Appetizer","Side Dish","Soup","Salad","Main Course","Street Food","Traditional Dish","Fast Food"];
 mealTypeSelect.innerHTML = '<option value="">Select...</option>';
 mealTypes.forEach(m => mealTypeSelect.appendChild(new Option(m,m)));
+const resultEl = document.getElementById("result");
+
+function setResultMessage(message) {
+  resultEl.innerHTML = `<div class="empty-state"><p>${message}</p></div>`;
+}
 
 // ======================= 💾 SAVE USER SELECTIONS =======================
 function saveSelections() {
@@ -68,32 +73,47 @@ window.addEventListener("load", () => {
 // ======================= 🍳 GET RECOMMENDATION & SURPRISE ME =======================
 async function fetchRecipe(query) {
   try {
+    setResultMessage("Finding the tastiest options...");
     const response = await fetch(`/recommend?query=${encodeURIComponent(query)}`);
     const data = await response.json();
 
     if (!data || data.error) {
-      document.getElementById("result").innerHTML = `<p>${data.error || "No results found."}</p>`;
+      setResultMessage(data.error || "No results found.");
       return;
     }
 
     // Clear previous results
-    document.getElementById("result").innerHTML = "";
+    resultEl.innerHTML = "";
 
-    data.forEach(recipe => {
+    data.forEach((recipe, index) => {
       const card = document.createElement("div");
-      card.className = "recipe-card";
+      card.className = "recipe-card reveal";
+      card.style.animationDelay = `${index * 0.08}s`;
+      const cuisine = recipe.country || "Unknown";
+      const imageMarkup = recipe.image
+        ? `<img src="${recipe.image}" alt="${recipe.title} photo" loading="lazy">`
+        : `<div class="image-fallback">No image available</div>`;
       card.innerHTML = `
-        <h2>${recipe.title}</h2>
-        ${recipe.image ? `<img src="${recipe.image}" alt="Food image">` : ""}
-        <p><strong>Country:</strong> ${recipe.country || "Unknown"}</p>
-        <p><strong>Ingredients:</strong><br>${recipe.ingredients}</p>
-        <p><strong>Steps:</strong><br>${recipe.instructions}</p>
-        <a href="${recipe.sourceUrl}" target="_blank">View Full Recipe</a>
+        <div class="card-media">${imageMarkup}</div>
+        <div class="card-header">
+          <h3>${recipe.title}</h3>
+          <span class="pill">${cuisine}</span>
+        </div>
+        <div class="card-section">
+          <p class="card-label">Ingredients</p>
+          <div class="card-text">${recipe.ingredients}</div>
+        </div>
+        <div class="card-section">
+          <p class="card-label">Steps</p>
+          <div class="card-text">${recipe.instructions}</div>
+        </div>
+        <a class="card-link" href="${recipe.sourceUrl}" target="_blank" rel="noopener">View Full Recipe</a>
       `;
-      document.getElementById("result").appendChild(card);
+      resultEl.appendChild(card);
     });
   } catch (err) {
-    document.getElementById("result").innerHTML = `<p>Something went wrong: ${err}</p>`;
+    const message = err && err.message ? err.message : String(err);
+    setResultMessage(`Something went wrong: ${message}`);
   }
 }
 
