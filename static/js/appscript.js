@@ -42,16 +42,19 @@ countries.forEach(c => {
 
 // ======================= 🥗 DIET DROPDOWN =======================
 const dietSelect = document.getElementById("diet");
-const diets = ["No Preference","Balanced","High Protein","Low Fat","Low Carb","Keto","Vegan","Vegetarian","Pescatarian","Paleo","Gluten Free","Dairy Free","Halal","Kosher"];
 dietSelect.innerHTML = '<option value="">Select...</option>';
+const diets = ["Vegetarian","Vegan","High Protein","Gluten Free"];
 diets.forEach(d => dietSelect.appendChild(new Option(d,d)));
 
 // ======================= 🍽️ MEAL TYPE DROPDOWN =======================
 const mealTypeSelect = document.getElementById("meal_type");
-const mealTypes = ["No Preference","Breakfast","Brunch","Lunch","Snack","Dinner","Dessert","Drink","Appetizer","Side Dish","Soup","Salad","Main Course","Street Food","Traditional Dish","Fast Food"];
 mealTypeSelect.innerHTML = '<option value="">Select...</option>';
+const mealTypes = ["Breakfast","Lunch","Snack","Dinner"];
 mealTypes.forEach(m => mealTypeSelect.appendChild(new Option(m,m)));
 const resultEl = document.getElementById("result");
+const RESULT_LIMIT = 15;
+let activeController = null;
+let stopRequested = false;
 
 function setResultMessage(message) {
   resultEl.innerHTML = `<div class="empty-state"><p>${message}</p></div>`;
@@ -64,21 +67,43 @@ function saveSelections() {
   localStorage.setItem("mealType", mealTypeSelect.value);
 }
 
+function restoreSelection(selectEl, storedValue) {
+  if (!storedValue) {
+    selectEl.value = "";
+    return;
+  }
+  const hasOption = Array.from(selectEl.options).some(option => option.value === storedValue);
+  selectEl.value = hasOption ? storedValue : "";
+}
+
 window.addEventListener("load", () => {
-  if(localStorage.getItem("cuisine")) countrySelect.value = localStorage.getItem("cuisine");
-  if(localStorage.getItem("diet")) dietSelect.value = localStorage.getItem("diet");
-  if(localStorage.getItem("mealType")) mealTypeSelect.value = localStorage.getItem("mealType");
+  restoreSelection(countrySelect, localStorage.getItem("cuisine"));
+  restoreSelection(dietSelect, localStorage.getItem("diet"));
+  restoreSelection(mealTypeSelect, localStorage.getItem("mealType"));
 });
 
 // ======================= 🍳 GET RECOMMENDATION & SURPRISE ME =======================
 async function fetchRecipe(query) {
   try {
+    stopRequested = false;
+    if (activeController) {
+      activeController.abort();
+    }
+    activeController = new AbortController();
     setResultMessage("Finding the tastiest options...");
-    const response = await fetch(`/recommend?query=${encodeURIComponent(query)}`);
+    const params = new URLSearchParams(query);
+    params.set("limit", RESULT_LIMIT);
+    const response = await fetch(`/recommend?${params.toString()}`, {
+      signal: activeController.signal,
+    });
     const data = await response.json();
 
     if (!data || data.error) {
       setResultMessage(data.error || "No results found.");
+      return;
+    }
+
+    if (stopRequested) {
       return;
     }
 
@@ -112,6 +137,9 @@ async function fetchRecipe(query) {
       resultEl.appendChild(card);
     });
   } catch (err) {
+    if (err && err.name === "AbortError") {
+      return;
+    }
     const message = err && err.message ? err.message : String(err);
     setResultMessage(`Something went wrong: ${message}`);
   }
@@ -119,12 +147,45 @@ async function fetchRecipe(query) {
 
 document.getElementById("getRecommendation").addEventListener("click", () => {
   saveSelections();
-  const query = `${document.getElementById("craving").value} ${countrySelect.value} ${dietSelect.value} ${mealTypeSelect.value} recipe`;
-  fetchRecipe(query);
+  const craving = document.getElementById("craving").value;
+  const country = countrySelect.value.trim();
+  const diet = dietSelect.value.trim();
+  const mealType = mealTypeSelect.value.trim();
+  const parts = [craving, country, diet, mealType, "recipes"].filter(Boolean);
+  const query = parts.join(" ");
+  fetchRecipe({
+    query,
+    country,
+    craving,
+    diet,
+    meal_type: mealType,
+  });
 });
 
 document.getElementById("surpriseMe").addEventListener("click", () => {
   saveSelections();
-  const randomQuery = `popular ${countries[Math.floor(Math.random()*countries.length)]} ${mealTypes[Math.floor(Math.random()*mealTypes.length)]} ${diets[Math.floor(Math.random()*diets.length)]} recipe`;
-  fetchRecipe(randomQuery);
+  const randomCountry = countries[Math.floor(Math.random() * countries.length)];
+  const randomMeal = mealTypes[Math.floor(Math.random() * mealTypes.length)];
+  const randomDiet = diets[Math.floor(Math.random() * diets.length)];
+  const randomCravingOptions = ["sweet", "salty", "spicy", "sweet-spicy"];
+  const randomCraving = randomCravingOptions[Math.floor(Math.random() * randomCravingOptions.length)];
+  const diet = randomDiet;
+  const mealType = randomMeal;
+  const parts = [randomCraving, randomCountry, diet, mealType, "recipes"].filter(Boolean);
+  const query = parts.join(" ");
+  fetchRecipe({
+    query,
+    country: randomCountry,
+    craving: randomCraving,
+    diet,
+    meal_type: mealType,
+  });
+});
+
+document.getElementById("stopResults").addEventListener("click", () => {
+  stopRequested = true;
+  if (activeController) {
+    activeController.abort();
+  }
+  setResultMessage("Stopped. Adjust your filters and try again.");
 });
